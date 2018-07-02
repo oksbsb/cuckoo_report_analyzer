@@ -22,7 +22,7 @@ Program akan berjalan dan menciptakan sub-folder di dalam folder storage dengan 
 
 Jika terdapat error seperti berikut :
 ```
-IOError: [Errno 2] No such file or directory: u'/some address to file'
+IOError: [Errno 2] No such file or directory: u'/address to file'
 
 ```
 Jalankan program sekali lagi, error tersebut dikarenakan folder telah dibuat, namun belum terbaca oleh program.

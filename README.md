@@ -6,3 +6,23 @@ Sebuah analyzer untuk menentukan serbuah executable adalah malware(Windows based
 Masukkan dataset kedalam folder ./dataset
 Download dari [Google Drive](https://drive.google.com/open?id=1AqDiMJQfIhNzAhUCkH-rPK118NAcrBq3)
 
+
+### HOW TO
+
+Program akan membaca report(dari Cuckoo sb) file executable, sehingga diperlukan report.json yang didapat setelah menganalisa malware menggunakan Cuckoo Sandbox.
+
+\nBerikut perintah untuk menjalankan 
+
+```
+python main.py 'report.json' 
+```
+Program akan berjalan dan menciptakan sub-folder di dalam folder storage dengan nama yg sama dengan file executable(.exe)
+
+### ERROR
+
+Jika terdapat error seperti berikut :
+```
+IOError: [Errno 2] No such file or directory: u'/some address to file'
+
+```
+Jalankan program sekali lagi, error tersebut dikarenakan folder telah dibuat, namun belum terbaca oleh program.

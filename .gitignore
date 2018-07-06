@@ -41,5 +41,7 @@
 ehthumbs.db
 Thumbs.db
 
-
+# program generated folders #
+######################
+storage/
 /storage/

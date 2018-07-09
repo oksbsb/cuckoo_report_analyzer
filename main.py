@@ -1,6 +1,6 @@
 import parser.json_parser as jp
 import analyzer.analyzer as analyzer
-import dataset.data_reader as data_reader
+
 
 import sys
 import ipapi
@@ -17,13 +17,14 @@ def main():
 	F_NAME = ""
 	jp.report(sys.argv[1])
 	F_NAME = jp.get_file_name()
+
 	analyzer.set_file(F_NAME)	
 	analyzer.main()
 
 if __name__ == "__main__":
 	#memanggil fungsi main
-	# main()
-	data_reader.read_csv()
+	main()
+	# data_reader.read_csv()
 
 	
             

@@ -8,4 +8,4 @@ def read_csv():
 		for rowdata in reader:
 			if len(rowdata) > 0:
 				dataSet.append(rowdata)
-	print dataSet    		
+	return dataSet			  		

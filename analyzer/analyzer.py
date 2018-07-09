@@ -1,3 +1,5 @@
+import dataset.data_reader as data_reader
+
 import json
 import sys
 import ipapi
@@ -70,16 +72,21 @@ def virus_total_report(md5):
 # 			if not data:
 # 				break
 
+
+
+
+
 def main():
 	processes = load_process_data()
+
+	api_calls = []
+
 	print processes
 	calls = processes['calls']
 
 	for call in calls:
-		print call['category']
-		print call['api']
-		print call['arguments']		
-
+		api_calls.append(call['api'])
+		
 	dlls =[]
 	pe_imports = load_pe_imports_data()
 	for pe_import in pe_imports:
@@ -103,6 +110,34 @@ def main():
 		sha512 = infos['sha512']
 		md5 = infos['md5']
 
+
+	first_seq = data_reader.read_csv()
+	second_seq = api_calls
+	score = 0
+	array = []
+	count = 0
+
+	for data in first_seq:
+		count += 1
+		if count == 1000:
+			break
+		for dat in data:
+			for da in second_seq:	
+				if (da==dat):
+					score+=1	
+		array.append((data[0],score))
+		score = 0
+
+	min_val = 0
+	max_scored_element = None
+
+	for data in array:
+		print data
+		if data[1] > min_val:
+			max_scored_element = data
+			min_val = data[1] 
+
+	print max_scored_element
 	# virus_total_report(md5)
 
 

@@ -63,6 +63,58 @@ def virus_total_report(md5):
 	        print "Malware:", malware
 
 
+def comparing(first_seq,second_seq,malware_seq):
+	score = 0
+	position = 0
+	array = []
+	count = 0
+
+
+	for data in first_seq:
+		
+		if count == 1000:
+			break
+		for dat in data:
+
+			for da in second_seq:	
+				if (da==dat):
+
+					score+=1
+				if da in malware_seq:
+					print malware_seq
+
+		array.append((data[0],score))
+		score = 0
+		count += 1
+
+
+	min_val = 0
+	max_scored_element = None
+
+	count = 0
+	for data in array:
+		print data
+		if data[1] > min_val:
+			#menandai posisi maximum score
+			position = count
+			
+			max_scored_element = data
+			min_val = data[1] 
+		count+=1
+
+	print max_scored_element
+	check_API(first_seq[position],second_seq)
+
+def check_API(first_seq,second_seq):
+	count = 0
+
+	for data in first_seq:
+		print data
+		if data in second_seq:
+			count += 1
+			print (data,count)
+
+
 # def read_memory_dump():
 # 	data = []
 # 	with open('../source_files/memory.dmp', 'rb') as infile:
@@ -112,32 +164,13 @@ def main():
 
 
 	first_seq = data_reader.read_csv()
+
 	second_seq = api_calls
-	score = 0
-	array = []
-	count = 0
+	
+	malware_seq = data_reader.read_csv_malware_API()
 
-	for data in first_seq:
-		count += 1
-		if count == 1000:
-			break
-		for dat in data:
-			for da in second_seq:	
-				if (da==dat):
-					score+=1	
-		array.append((data[0],score))
-		score = 0
+	comparing(first_seq,second_seq,malware_seq)
 
-	min_val = 0
-	max_scored_element = None
-
-	for data in array:
-		print data
-		if data[1] > min_val:
-			max_scored_element = data
-			min_val = data[1] 
-
-	print max_scored_element
 	# virus_total_report(md5)
 
 

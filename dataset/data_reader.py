@@ -13,7 +13,7 @@ def read_csv():
 
 def read_csv_malware_API():
 	dataSet = []
-	with open("./dataset/malware_api_calls.csv", "rb") as stream:
+	with open("./dataset/malware_API_calls.csv", "rb") as stream:
 		reader = csv.reader(stream, delimiter=',')
 		reader.next() # ignoring header
 		for rowdata in reader:

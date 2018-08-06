@@ -2,16 +2,12 @@ import dataset.data_reader as data_reader
 
 import json
 import sys
-import ipapi
+# import ipapi
 from pandas.io.json import json_normalize
 import hashlib
 from termcolor import colored
 import os
 import virustotal
-import dpkt
-import socket
-import datetime
-import hexdump
 import sys
 
 VT_API_KEY = "c6897aa50129b40c32139ed2ebe53214139eeb9068f87b43584e6016eb853932"
@@ -40,6 +36,11 @@ def load_info():
 		info_dict = json.load(f)
 	return info_dict
 
+def load_string():
+	with open("./storage/"+get_file()+"/string_debug.json", 'r') as f:
+		info_dict = json.load(f)
+	return info_dict
+
 
 def virus_total_report(md5):
 	v = virustotal.VirusTotal(VT_API_KEY)
@@ -64,25 +65,29 @@ def virus_total_report(md5):
 
 def count_score(matches):
 	temp = []
-	count = 0
-
+	score = []
+	print "Analyzing Score"
 	for match in matches:
-		if (int(match[1])>=7):
-			count+=1
-			print "Menemukan "+str(count)+" malicious behavior"	
-			temp.append(match)	
+		temp.append(match)
+		score.append(match[1])
+			
 	if (temp):
-		print "\n=======FILE ADALAH MALWARE=======\n"	
-		print "Karena melakukan hal berikut :"
-		for match in matches:
-			if (int(match[1])>=7):
-				print "Behavior :	" + match[0]
-				print "Score 	:	" + match[1]
-				print "Functions:" 
-				for func in match[2]:
-					print "	"+func
-	else :
-		print "\n=======FILE TIDAK MALWARE=======\n"	
+		print "\nMenemukan "+str(len(temp))+" behavior\n"	
+		
+		print "Behavior :	"
+		for tem in temp:
+			print "	"+tem[0]
+		print "Functions:" 
+		for tem in temp:
+			print tem[2]
+		if ("10"or"7") in score:	
+			print "\n======="+colored("Executable adalah malware", 'red')+"\n"
+		else:
+			print "\n======="+colored("Executable tidak malware", 'green')+"\n"
+
+ 
+	else:
+		print colored("=======Tidak ada behavior yang mencurigakan.",'green')+"\n\n"
 
 def delete_duplicate(array):
 	output = []
@@ -101,35 +106,57 @@ def analyze(malware_seq,application_api_seq):
 	
 	for malware_csv_rows in malware_seq:
 		# print malware_csv_rows
-		for api in no_dup:
+		for api in no_dup:	
 			if api in malware_csv_rows:
 				match_api.append(api)
 		if match_api:
-			print match_api
 			temp = match_api
 			matches.append([malware_csv_rows[0],malware_csv_rows[1],temp])
 		match_api = []
+
 	count_score(matches)
 
 
 def main():
-	processes = load_process_data()
-
+	dlls =[]
 	application_api_seq = []
+	
 	malware_seq = data_reader.read_csv_malware_API()
 
-	calls = processes['calls']
+	try :
+		processes = load_process_data()		
 
-	for call in calls:
-		application_api_seq.append(call['api'])
-		
-	dlls =[]
-	pe_imports = load_pe_imports_data()
-	for pe_import in pe_imports:
-		print pe_import['dll']
-		for imports in pe_import['imports']:
-			print imports['name']
-			dlls.append((pe_import['dll'],imports['name']))
+		calls = processes['calls']
+
+		for call in calls:
+			application_api_seq.append(call['api'])
+			
+	except:
+		print "tidak dapat menemukan behavior"		
+
+	try :
+		pe_imports = load_pe_imports_data()
+		for pe_import in pe_imports:
+			# print pe_import['dll']
+			for imports in pe_import['imports']:
+				# print imports['name']
+				dlls.append(imports['name'])
+
+	except:
+		print "tidak dapat menemukan static"	 
+
+	str=[]
+	try :
+		strings = load_string()
+		for string in strings:
+			str.append(string)
+
+		# print dlls
+	except:
+		print "tidak dapat menemukan strings"		
+				
+	# print dlls
+
 
 	sha1 = ""
 	sha256 = ""
@@ -144,8 +171,18 @@ def main():
 		md5 = infos['md5']
 
 
-	analyze(malware_seq,application_api_seq)
-
+	if(application_api_seq):	
+		print "\n=======Analyzing behavior based on behavior report"
+		analyze(malware_seq,application_api_seq)
+	
+	if(dlls):
+		print "\n=======Analyzing behavior based on DLLs report"
+		analyze(malware_seq,dlls)
+		
+	if(str):
+		print "\n=======Analyzing behavior based on debug report"
+		analyze(malware_seq,str)	
+	
 	# virus_total_report(md5)
 
 

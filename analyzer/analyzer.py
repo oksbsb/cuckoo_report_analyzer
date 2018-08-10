@@ -70,17 +70,16 @@ def count_score(matches):
 	for match in matches:
 		temp.append(match)
 		score.append(match[1])
-			
 	if (temp):
 		print "\nMenemukan "+str(len(temp))+" behavior\n"	
-		
 		print "Behavior :	"
 		for tem in temp:
 			print "	"+tem[0]
 		print "Functions:" 
 		for tem in temp:
 			print tem[2]
-		if ("10"or"7") in score:	
+		#check if there is some malicious behavior based on its score, 6 to 10 
+		if ("10"or"9"or"8"or"7"or"6") in score:	
 			print "\n======="+colored("Executable adalah malware", 'red')+"\n"
 		else:
 			print "\n======="+colored("Executable tidak malware", 'green')+"\n"
